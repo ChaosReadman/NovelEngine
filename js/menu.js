@@ -11,6 +11,9 @@ document.getElementById('menu').innerHTML =
     "        <li class='nav-item'>" +
     "            <a class='nav-link' href='sprite.html'>スプライトテスト</a>" +
     "        </li>" +
+    "        <li class='nav-item'>" +
+    "            <a class='nav-link' href='aseprite.html'>asepriteTest</a>" +
+    "        </li>" +
     "    </ul>" +
     "</div>" +
     "</nav>";
