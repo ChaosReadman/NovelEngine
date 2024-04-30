@@ -44,7 +44,7 @@ class Sprite {
     }
 
     draw(ctx) {
-        console.log("Sprite::draw");
+//        console.log("Sprite::draw");
         var f = this.jsonData.frames[this.currentFrame];
         // フレーム換算（asepriteは1/1000、しかしブラウザは1/60なので換算する）
         if (f.duration / 1000 * 60 < this.frameCount) {
