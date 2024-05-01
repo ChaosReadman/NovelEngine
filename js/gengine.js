@@ -12,6 +12,7 @@ class Sprite {
     jsonData;
     spriteName;
     image;
+    static ImageDic = [];
 
     constructor(name, jsonData, frameTagName, x = 0, y = 0) {
         this.spriteName = name;
@@ -34,17 +35,21 @@ class Sprite {
 
     static async build(name, jsonData, frameTagName, x = 0, y = 0) {
         const sprite = new Sprite(name, jsonData, frameTagName, x, y);
-        sprite.image = new Image();
-        sprite.image.src = "images/" + sprite.jsonData.meta.image;  // asepriteのJSONをわりつける
+        if (this.ImageDic[name] === undefined) {
+            const img = new Image();
+            img.src = "images/" + sprite.jsonData.meta.image;  // asepriteのJSONをわりつける
+            await img.decode();
+            // await 以降はイメージが使えるので、ちゃんと情報も表示できる
+            console.log(`loaded pic ! width: ${img.width}, height: ${img.height}`);
+            this.ImageDic[name] = img;
+        }
+        sprite.image = this.ImageDic[name];
 
-        await sprite.image.decode();
-        // await 以降はイメージが使えるので、ちゃんと情報も表示できる
-        console.log(`loaded pic ! width: ${sprite.image.width}, height: ${sprite.image.height}`);
         return sprite;
     }
 
     draw(ctx) {
-//        console.log("Sprite::draw");
+        //        console.log("Sprite::draw");
         var f = this.jsonData.frames[this.currentFrame];
         // フレーム換算（asepriteは1/1000、しかしブラウザは1/60なので換算する）
         if (f.duration / 1000 * 60 < this.frameCount) {
