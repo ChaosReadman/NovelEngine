@@ -66,14 +66,14 @@ class Sprite {
         }
 
         ctx.drawImage(this.image,
-            f.frame.x,    // sx      (元画像の切り抜き始点X)
-            f.frame.y,    // sy      (元画像の切り抜き始点Y)
-            f.frame.w,    // sWidth  (元画像の切り抜きサイズ：幅)
-            f.frame.h,    // sHeight (元画像の切り抜きサイズ：高)
-            this.x,     // dx
-            this.y,     // dy
-            f.frame.w,    // 圧縮幅
-            f.frame.h     // 圧縮高
+            f.frame.x,      // sx      (元画像の切り抜き始点X)
+            f.frame.y,      // sy      (元画像の切り抜き始点Y)
+            f.frame.w,      // sWidth  (元画像の切り抜きサイズ：幅)
+            f.frame.h,      // sHeight (元画像の切り抜きサイズ：高)
+            this.x,         // dx
+            this.y,         // dy
+            f.frame.w,      // 圧縮幅
+            f.frame.h       // 圧縮高
         );
         // フレームをインクリメントする
         this.frameCount += 1;
