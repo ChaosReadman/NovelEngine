@@ -87,7 +87,7 @@ class Primitive {
 
     loop() {
         this.context.fillStyle = "blue";
-        this.context.fillRect(0, 0, 300, 300);
+        this.context.fillRect(0, 0, 600, 600);
 
         this.primitives.forEach(element => {
             element.draw(this.context);
