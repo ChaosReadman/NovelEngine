@@ -9,17 +9,32 @@ class Sprite {
     frameName;
     x;
     y;
+    vx;
+    vy;
     jsonData;
     spriteName;
     image;
     static ImageDic = [];
+    childs = [];
+    physics = [];
+    followParent = false;
 
-    constructor(name, jsonData, frameTagName, x = 0, y = 0) {
+    appendChild(sprite) {
+        this.childs.push(sprite)
+    }
+
+    addPhysic(fn) {
+        this.physics.push(fn);
+    }
+
+    constructor(name, jsonData, frameTagName, x = 0, y = 0, vx = 0, vy = 0) {
         this.spriteName = name;
         this.jsonData = jsonData;
         this.currentFrameTagName = frameTagName;
         this.x = x;
         this.y = y;
+        this.vx = vx;
+        this.vy = vy;
 
         var tag = this.jsonData.meta.frameTags.filter(function (item) {
             if (item.name = frameTagName) {
@@ -33,8 +48,8 @@ class Sprite {
         this.frameCount = 0;
     }
 
-    static async build(name, jsonData, frameTagName, x = 0, y = 0) {
-        const sprite = new Sprite(name, jsonData, frameTagName, x, y);
+    static async build(name, jsonData, frameTagName, x = 0, y = 0, vx = 0, vy = 0) {
+        const sprite = new Sprite(name, jsonData, frameTagName, x, y, vx, vy);
         if (this.ImageDic[name] === undefined) {
             const img = new Image();
             img.src = "images/" + sprite.jsonData.meta.image;  // asepriteのJSONをわりつける
@@ -75,8 +90,18 @@ class Sprite {
             f.frame.w,      // 圧縮幅
             f.frame.h       // 圧縮高
         );
+        // 表示をしたのちに、次のフレームの位置を計算しておく
+        var i = 0;
+        do {
+            this.physics[i](this);
+            i++;
+        } while (i < this.physics.length)
+
+
         // フレームをインクリメントする
         this.frameCount += 1;
+        // true：次のフレームも生存 false:次のフレームでは消える
+        return true;
     }
 }
 
@@ -94,9 +119,15 @@ class Primitive {
         this.context.fillStyle = "blue";
         this.context.fillRect(0, 0, 600, 600);
 
-        this.primitives.forEach(element => {
-            element.draw(this.context);
-        });
+        var i = 0;
+        do {
+            if (this.primitives[i].draw(this.context) != true) {
+                this.primitives.slice(i, 1); // 消す
+            } else {
+                i++;
+            }
+        } while (i < this.primitives.length);
+
         if (this.isRunning) {
             window.requestAnimationFrame(this.loop.bind(this));
         }

@@ -9,11 +9,20 @@
     <script src="js/gengine.js"></script>
 
     <script>
+        var a = (spr) => {
+            spr.x += spr.vx;
+            if (spr.x > 600 || spr.x < 0) {
+                spr.vx = spr.vx * -1;
+            }
+        }
+        
         async function init() {
             gPrim = new Primitive(document.getElementById("canvas").getContext("2d"));
             for (var j = 0; j < 20; j++) {
                 for (var i = 0; i < 20; i++) {
-                    gPrim.append(await Sprite.build("WalkMan", jsWalkMan, "Walk", i * 30, j * 30));
+                    var sp = await Sprite.build("WalkMan", jsWalkMan, "Walk", i * 30, j * 30, 1, 0);
+                    sp.addPhysic(a);
+                    gPrim.append(sp);
                 }
             }
             gPrim.run();
