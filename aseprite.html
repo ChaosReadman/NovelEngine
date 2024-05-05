@@ -15,13 +15,18 @@
                 spr.vx = spr.vx * -1;
             }
         }
-        
+
+        var b = (spr) =>{
+            spr.y += 10*Math.sin(gPrim.loopCount/6);
+        }
+
         async function init() {
             gPrim = new Primitive(document.getElementById("canvas").getContext("2d"));
             for (var j = 0; j < 20; j++) {
                 for (var i = 0; i < 20; i++) {
                     var sp = await Sprite.build("WalkMan", jsWalkMan, "Walk", i * 30, j * 30, 1, 0);
                     sp.addPhysic(a);
+                    sp.addPhysic(b);
                     gPrim.append(sp);
                 }
             }

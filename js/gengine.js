@@ -109,6 +109,7 @@ class Primitive {
     primitives = [];
     context = null;
     isRunning = false;
+    loopCount = 0;
 
     constructor(context) {
         console.log("constructor");
@@ -118,6 +119,7 @@ class Primitive {
     loop() {
         this.context.fillStyle = "blue";
         this.context.fillRect(0, 0, 600, 600);
+        this.loopCount++;
 
         var i = 0;
         do {
