@@ -85,18 +85,19 @@ class Sprite {
             f.frame.y,      // sy      (元画像の切り抜き始点Y)
             f.frame.w,      // sWidth  (元画像の切り抜きサイズ：幅)
             f.frame.h,      // sHeight (元画像の切り抜きサイズ：高)
-            this.x,         // dx
-            this.y,         // dy
+            this.x + f.spriteSourceSize.x,         // dx
+            this.y + f.spriteSourceSize.y,         // dy
             f.frame.w,      // 圧縮幅
             f.frame.h       // 圧縮高
         );
         // 表示をしたのちに、次のフレームの位置を計算しておく
-        var i = 0;
-        do {
-            this.physics[i](this);
-            i++;
-        } while (i < this.physics.length)
-
+        if (this.physics.length >0){
+            var i = 0;
+            do {
+                this.physics[i](this);
+                i++;
+            } while (i < this.physics.length)
+        }
 
         // フレームをインクリメントする
         this.frameCount += 1;
