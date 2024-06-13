@@ -27,6 +27,15 @@ class Sprite {
         this.physics.push(fn);
     }
 
+    isPhysic(fn){
+        for (var i=0;i<this.physics.length;i++){
+            if (fn===this.physics[i]){
+                return true
+            }
+        }
+        return false
+    }
+
     constructor(name, jsonData, frameTagName, x = 0, y = 0, vx = 0, vy = 0) {
         this.spriteName = name;
         this.jsonData = jsonData;
