@@ -10,36 +10,46 @@
     <script src="js/gengine.js"></script>
 
     <script>
+        var bg = (spr) => {
+            spr.context.fillStyle = "rgb(255 165 0)";;
+            spr.context.fillRect(0, 0, spr.context.canvas.width, spr.context.canvas.height);
+        }
+
         var a = (spr) => {
-            spr.x += spr.vx;
-            if (spr.x > 600 || spr.x < 0) {
+            spr.xPos += spr.vx;
+            if (spr.xPos > 600 || spr.xPos < 0) {
                 spr.vx = spr.vx * -1;
-                if (!spr.isPhysic(b)){
-                    spr.addPhysic(b);
-                }
             }
         }
 
-        var b = (spr) =>{
-            spr.y += 10*Math.sin(gPrim.loopCount/6);
+        var b = (spr) => {
+            spr.yPos += 10 * Math.sin(gPrim.loopCount / 6);
         }
 
         async function init() {
             gPrim = new Primitive(document.getElementById("canvas").getContext("2d"));
-            for (var j = 0; j < 20; j++) {
-                for (var i = 0; i < 20; i++) {
-                    var sp = await Sprite.build("WalkMan", jsWalkMan, "Walk", i * 30, j * 30, 1, 0);
-                    sp.addPhysic(a);
-                    gPrim.append(sp);
-                }
-            }
 
-            for (var j = 0; j < 20; j++) {
-                for (var i = 0; i < 20; i++) {
-                    var sp = await Sprite.build("Futaba", jsMebae, "Mebae", i * 30, j * 30, 1, 0);
+            var sprBg = new Sprite("BG", null, "", 0, 0, 0, 0);
+            sprBg.addPhysic(bg);
+            gPrim.append(sprBg);
+
+            var spWalkman = await Sprite.build("WalkMan", jsWalkMan, "Walk", 100, 100, 1, 0);
+            var spChildJumpmanRight = await Sprite.build("WalkMan", jsWalkMan, "Walk", 30, 0, 1, 0);
+            var spChildJumpmanUp = await Sprite.build("WalkMan", jsWalkMan, "Walk", 0, -30, 1, 0);
+            // spChildJumpmanRight.addPhysic(b);
+            spChildJumpmanUp.addPhysic(b);
+
+            for (var j = 0; j < window.innerHeight / 64 - 1; j++) {
+                for (var i = 0; i < window.innerWidth / 64 - 1; i++) {
+                    var sp = await Sprite.build("Futaba", jsMebae, "Mebae", i * 64, j * 64, 1, 0);
                     gPrim.append(sp);
                 }
             }
+            spWalkman.appendChild(spChildJumpmanRight);
+            spWalkman.appendChild(spChildJumpmanUp);
+            spWalkman.addPhysic(a);
+            gPrim.append(spWalkman);
+
             gPrim.run();
         }
     </script>
@@ -47,7 +57,7 @@
 </head>
 
 <body onload="init();">
-    <canvas id="canvas" width="600" height="600" />
+    <canvas id="canvas" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 

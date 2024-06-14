@@ -7,8 +7,8 @@ class Sprite {
     currentFrame;           // framesのフレーム番号
     crameCount;
     frameName;
-    x;
-    y;
+    xPos;
+    yPos;
     vx;
     vy;
     jsonData;
@@ -18,6 +18,7 @@ class Sprite {
     childs = [];
     physics = [];
     followParent = false;
+    context;
 
     appendChild(sprite) {
         this.childs.push(sprite)
@@ -27,9 +28,9 @@ class Sprite {
         this.physics.push(fn);
     }
 
-    isPhysic(fn){
-        for (var i=0;i<this.physics.length;i++){
-            if (fn===this.physics[i]){
+    isPhysic(fn) {
+        for (var i = 0; i < this.physics.length; i++) {
+            if (fn === this.physics[i]) {
                 return true
             }
         }
@@ -40,19 +41,21 @@ class Sprite {
         this.spriteName = name;
         this.jsonData = jsonData;
         this.currentFrameTagName = frameTagName;
-        this.x = x;
-        this.y = y;
+        this.xPos = x;
+        this.yPos = y;
         this.vx = vx;
         this.vy = vy;
 
-        var tag = this.jsonData.meta.frameTags.filter(function (item) {
-            if (item.name = frameTagName) {
-                return item;
-            }
-        })
-        this.currentFrameTagFrom = tag[0].from;
-        this.currentFrameTagTo = tag[0].to;
-        this.currentFrame = this.currentFrameTagFrom;   // 初期値
+        if (jsonData != null) {
+            var tag = this.jsonData.meta.frameTags.filter(function (item) {
+                if (item.name = frameTagName) {
+                    return item;
+                }
+            })
+            this.currentFrameTagFrom = tag[0].from;
+            this.currentFrameTagTo = tag[0].to;
+            this.currentFrame = this.currentFrameTagFrom;   // 初期値
+        }
 
         this.frameCount = 0;
     }
@@ -72,35 +75,55 @@ class Sprite {
         return sprite;
     }
 
-    draw(ctx) {
-        //        console.log("Sprite::draw");
-        var f = this.jsonData.frames[this.currentFrame];
-        // フレーム換算（asepriteは1/1000、しかしブラウザは1/60なので換算する）
-        if (f.duration / 1000 * 60 < this.frameCount) {
-            // 次のフレームへ
-            if (this.currentFrame == this.currentFrameTagTo) {
-                this.currentFrame = this.currentFrameTagFrom;
-            } else {
-                this.currentFrame += 1;
+    draw(ctx,parent) {
+        this.context = ctx;
+        if (this.jsonData != null) {
+            //        console.log("Sprite::draw");
+            var f = this.jsonData.frames[this.currentFrame];
+            // フレーム換算（asepriteは1/1000、しかしブラウザは1/60なので換算する）
+            if (f.duration / 1000 * 60 < this.frameCount) {
+                // 次のフレームへ
+                if (this.currentFrame == this.currentFrameTagTo) {
+                    this.currentFrame = this.currentFrameTagFrom;
+                } else {
+                    this.currentFrame += 1;
+                }
+                // あらためて現在のフレームをセット
+                f = this.jsonData.frames[this.currentFrame];
+                // フレームカウントを初期化
+                this.frameCount = 0;
             }
-            // あらためて現在のフレームをセット
-            f = this.jsonData.frames[this.currentFrame];
-            // フレームカウントを初期化
-            this.frameCount = 0;
+            if (parent != null){
+                ctx.drawImage(this.image,
+                    f.frame.x,      // sx      (元画像の切り抜き始点X)
+                    f.frame.y,      // sy      (元画像の切り抜き始点Y)
+                    f.frame.w,      // sWidth  (元画像の切り抜きサイズ：幅)
+                    f.frame.h,      // sHeight (元画像の切り抜きサイズ：高)
+                    this.xPos + f.spriteSourceSize.x + parent.xPos,         // dx
+                    this.yPos + f.spriteSourceSize.y + parent.yPos,         // dy
+                    f.frame.w,      // 圧縮幅
+                    f.frame.h       // 圧縮高
+                );
+            }else{
+                ctx.drawImage(this.image,
+                    f.frame.x,      // sx      (元画像の切り抜き始点X)
+                    f.frame.y,      // sy      (元画像の切り抜き始点Y)
+                    f.frame.w,      // sWidth  (元画像の切り抜きサイズ：幅)
+                    f.frame.h,      // sHeight (元画像の切り抜きサイズ：高)
+                    this.xPos + f.spriteSourceSize.x,         // dx
+                    this.yPos + f.spriteSourceSize.y,         // dy
+                    f.frame.w,      // 圧縮幅
+                    f.frame.h       // 圧縮高
+                );
+            }
+
+            for (var i=0;i<this.childs.length;i++){
+                this.childs[i].draw(ctx,this);
+            }
         }
 
-        ctx.drawImage(this.image,
-            f.frame.x,      // sx      (元画像の切り抜き始点X)
-            f.frame.y,      // sy      (元画像の切り抜き始点Y)
-            f.frame.w,      // sWidth  (元画像の切り抜きサイズ：幅)
-            f.frame.h,      // sHeight (元画像の切り抜きサイズ：高)
-            this.x + f.spriteSourceSize.x,         // dx
-            this.y + f.spriteSourceSize.y,         // dy
-            f.frame.w,      // 圧縮幅
-            f.frame.h       // 圧縮高
-        );
         // 表示をしたのちに、次のフレームの位置を計算しておく
-        if (this.physics.length >0){
+        if (this.physics.length > 0) {
             var i = 0;
             do {
                 this.physics[i](this);
@@ -124,16 +147,16 @@ class Primitive {
     constructor(context) {
         console.log("constructor");
         this.context = context;
+        this.context.canvas.width = window.innerWidth;
+        this.context.canvas.height = window.innerHeight;
     }
 
     loop() {
-        this.context.fillStyle = "blue";
-        this.context.fillRect(0, 0, 600, 600);
         this.loopCount++;
 
         var i = 0;
         do {
-            if (this.primitives[i].draw(this.context) != true) {
+            if (this.primitives[i].draw(this.context,null) != true) {
                 this.primitives.slice(i, 1); // 消す
             } else {
                 i++;
