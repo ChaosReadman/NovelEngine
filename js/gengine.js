@@ -147,8 +147,7 @@ class Primitive {
     constructor(context) {
         console.log("constructor");
         this.context = context;
-        this.context.canvas.width = window.innerWidth;
-        this.context.canvas.height = window.innerHeight;
+        console.log("canvas Size = (" + this.context.canvas.width + "," +  this.context.canvas.height + ")");
     }
 
     loop() {
