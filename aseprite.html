@@ -10,20 +10,32 @@
     <script src="js/gengine.js"></script>
 
     <script>
+        var ClickedX;
+        var ClickedY;
         var bg = (spr) => {
             spr.context.fillStyle = "rgb(255 165 0)";;
             spr.context.fillRect(0, 0, spr.context.canvas.width, spr.context.canvas.height);
         }
 
-        var a = (spr) => {
-            spr.xPos += spr.vx;
-            if (spr.xPos > 600 || spr.xPos < 0) {
-                spr.vx = spr.vx * -1;
+        var MebaeToIdle = (spr) => {
+            if (spr.currentFrame == spr.currentFrameTagTo) {
+                spr.setTag("Idle");
             }
         }
 
-        var b = (spr) => {
-            spr.yPos += 10 * Math.sin(gPrim.loopCount / 6);
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        async function dispatch() {
+            var x = getRandomInt(640-64);
+            var y = getRandomInt(480-64);
+            console.log("dispatched", x,y)
+            var sp = await Sprite.build("Futaba", jsMebae, "Mebae", x,y, 1, 0);
+            sp.addPhysic(MebaeToIdle);
+            gPrim.append(sp);
+            nextTime = 3 + getRandomInt(5) * 1000;
+            setTimeout(dispatch, nextTime);
         }
 
         async function init() {
@@ -32,25 +44,20 @@
             var sprBg = new Sprite("BG", null, "", 0, 0, 0, 0);
             sprBg.addPhysic(bg);
             gPrim.append(sprBg);
-
-            var spWalkman = await Sprite.build("WalkMan", jsWalkMan, "Walk", 100, 100, 1, 0);
-            var spChildJumpmanRight = await Sprite.build("WalkMan", jsWalkMan, "Walk", 30, 0, 1, 0);
-            var spChildJumpmanUp = await Sprite.build("WalkMan", jsWalkMan, "Walk", 0, -30, 1, 0);
-            // spChildJumpmanRight.addPhysic(b);
-            spChildJumpmanUp.addPhysic(b);
-
-            for (var j = 0; j < window.innerHeight / 64 - 1; j++) {
-                for (var i = 0; i < window.innerWidth / 64 - 1; i++) {
-                    var sp = await Sprite.build("Futaba", jsMebae, "Mebae", i * 64, j * 64, 1, 0);
-                    gPrim.append(sp);
-                }
-            }
-            spWalkman.appendChild(spChildJumpmanRight);
-            spWalkman.appendChild(spChildJumpmanUp);
-            spWalkman.addPhysic(a);
-            gPrim.append(spWalkman);
-
             gPrim.run();
+            var c = document.getElementById("canvas");
+
+            c.addEventListener('click', function (event) {
+            ClickedX = event.offsetX;
+            ClickedY = event.offsetY;
+            var ctx = this.getContext("2d");
+            ctx.beginPath();
+            ctx.arc(ClickedX, ClickedY, 32, 0, 2 * Math.PI);
+            ctx.stroke();
+            console.log("clicked", ClickedX, ClickedY);
+
+        }, false);
+            dispatch();
         }
     </script>
 

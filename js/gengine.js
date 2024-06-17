@@ -37,6 +37,20 @@ class Sprite {
         return false
     }
 
+    setTag(frameTagName) {
+        if (this.jsonData != null) {
+            var tag = this.jsonData.meta.frameTags.filter(function (item) {
+                if (item.name == frameTagName) {
+                    return item;
+                }
+            })
+            this.currentFrameTagFrom = tag[0].from;
+            this.currentFrameTagTo = tag[0].to;
+            this.currentFrame = this.currentFrameTagFrom;   // 初期値
+        }
+        this.frameCount = 0;
+    }
+
     constructor(name, jsonData, frameTagName, x = 0, y = 0, vx = 0, vy = 0) {
         this.spriteName = name;
         this.jsonData = jsonData;
@@ -46,18 +60,7 @@ class Sprite {
         this.vx = vx;
         this.vy = vy;
 
-        if (jsonData != null) {
-            var tag = this.jsonData.meta.frameTags.filter(function (item) {
-                if (item.name = frameTagName) {
-                    return item;
-                }
-            })
-            this.currentFrameTagFrom = tag[0].from;
-            this.currentFrameTagTo = tag[0].to;
-            this.currentFrame = this.currentFrameTagFrom;   // 初期値
-        }
-
-        this.frameCount = 0;
+        this.setTag(frameTagName)
     }
 
     static async build(name, jsonData, frameTagName, x = 0, y = 0, vx = 0, vy = 0) {
@@ -75,7 +78,7 @@ class Sprite {
         return sprite;
     }
 
-    draw(ctx,parent) {
+    draw(ctx, parent) {
         this.context = ctx;
         if (this.jsonData != null) {
             //        console.log("Sprite::draw");
@@ -93,32 +96,39 @@ class Sprite {
                 // フレームカウントを初期化
                 this.frameCount = 0;
             }
-            if (parent != null){
+            if (parent != null) {
                 ctx.drawImage(this.image,
                     f.frame.x,      // sx      (元画像の切り抜き始点X)
                     f.frame.y,      // sy      (元画像の切り抜き始点Y)
                     f.frame.w,      // sWidth  (元画像の切り抜きサイズ：幅)
                     f.frame.h,      // sHeight (元画像の切り抜きサイズ：高)
-                    this.xPos + f.spriteSourceSize.x + parent.xPos,         // dx
-                    this.yPos + f.spriteSourceSize.y + parent.yPos,         // dy
+                    parent.xPos + this.xPos + f.spriteSourceSize.x - f.sourceSize.w / 2,         // dx
+                    parent.yPos + this.yPos + f.spriteSourceSize.y - f.sourceSize.h,         // dy
                     f.frame.w,      // 圧縮幅
                     f.frame.h       // 圧縮高
                 );
-            }else{
+            } else {
                 ctx.drawImage(this.image,
                     f.frame.x,      // sx      (元画像の切り抜き始点X)
                     f.frame.y,      // sy      (元画像の切り抜き始点Y)
                     f.frame.w,      // sWidth  (元画像の切り抜きサイズ：幅)
                     f.frame.h,      // sHeight (元画像の切り抜きサイズ：高)
-                    this.xPos + f.spriteSourceSize.x,         // dx
-                    this.yPos + f.spriteSourceSize.y,         // dy
+                    this.xPos + f.spriteSourceSize.x - f.sourceSize.w / 2,       // dx
+                    this.yPos + f.spriteSourceSize.y - f.sourceSize.h,         // dy
                     f.frame.w,      // 圧縮幅
                     f.frame.h       // 圧縮高
                 );
             }
+            // 当たり判定を矩形でくくる
+            ctx.beginPath();
+            ctx.rect(this.xPos - f.frame.w / 2, this.yPos - f.frame.h, f.frame.w, f.frame.h);
+            ctx.stroke();
+            ctx.fillStyle = "red";
+            ctx.fillRect(this.xPos - 1, this.yPos, 2, 2);
+            ctx.stroke();
 
-            for (var i=0;i<this.childs.length;i++){
-                this.childs[i].draw(ctx,this);
+            for (var i = 0; i < this.childs.length; i++) {
+                this.childs[i].draw(ctx, this);
             }
         }
 
@@ -147,7 +157,7 @@ class Primitive {
     constructor(context) {
         console.log("constructor");
         this.context = context;
-        console.log("canvas Size = (" + this.context.canvas.width + "," +  this.context.canvas.height + ")");
+        console.log("canvas Size = (" + this.context.canvas.width + "," + this.context.canvas.height + ")");
     }
 
     loop() {
@@ -155,7 +165,7 @@ class Primitive {
 
         var i = 0;
         do {
-            if (this.primitives[i].draw(this.context,null) != true) {
+            if (this.primitives[i].draw(this.context, null) != true) {
                 this.primitives.slice(i, 1); // 消す
             } else {
                 i++;
