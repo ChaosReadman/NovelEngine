@@ -28,10 +28,10 @@
         }
 
         async function dispatch() {
-            var x = getRandomInt(640-64);
-            var y = getRandomInt(480-64);
-            console.log("dispatched", x,y)
-            var sp = await Sprite.build("Futaba", jsMebae, "Mebae", x,y, 1, 0);
+            var x = 32 + getRandomInt(640 - 64);
+            var y = 32 + getRandomInt(480 - 64);
+            console.log("dispatched", x, y)
+            var sp = await Sprite.build("Futaba", jsMebae, "Mebae", x, y, 1, 0);
             sp.addPhysic(MebaeToIdle);
             gPrim.append(sp);
             nextTime = 3 + getRandomInt(5) * 1000;
@@ -48,15 +48,15 @@
             var c = document.getElementById("canvas");
 
             c.addEventListener('click', function (event) {
-            ClickedX = event.offsetX;
-            ClickedY = event.offsetY;
-            var ctx = this.getContext("2d");
-            ctx.beginPath();
-            ctx.arc(ClickedX, ClickedY, 32, 0, 2 * Math.PI);
-            ctx.stroke();
-            console.log("clicked", ClickedX, ClickedY);
+                ClickedX = event.offsetX;
+                ClickedY = event.offsetY;
+                var ctx = this.getContext("2d");
+                ctx.beginPath();
+                ctx.arc(ClickedX, ClickedY, 32, 0, 2 * Math.PI);
+                ctx.stroke();
+                console.log("clicked", ClickedX, ClickedY);
 
-        }, false);
+            }, false);
             dispatch();
         }
     </script>
