@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="jp">
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <canvas id="canvas" width="256" height="256"></canvas>
+    <script>
+      // 設定するドット絵はコレ！
+      const dotData = 
+          "□□■□□□□□■□□" +
+          "□□□■□□□■□□□" +
+          "□□■■■■■■■□□" +
+          "□■■□■■■□■■□" +
+          "■■■■■■■■■■■" +
+          "■□■■■■■■■□■" +
+          "■□■□□□□□■□■" +
+          "□□□■■□■■□□□";
+
+      // キャンバスを取得する
+      let canvas = document.getElementById("canvas");
+
+      // 作画するためのコンテキストを取得する
+      let context = canvas.getContext("2d");
+
+      // キャンバスを黒く塗りつぶす
+      context.fillStyle = "black";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      // イメージデータを作成する
+      let imageData = context.createImageData(11, 8);
+
+      // イメージデータにドット絵のデータを設定する
+      let dotDataArr = dotData.split("");
+      for (let i = 0; i < dotDataArr.length; i++) {
+        switch(dotDataArr[i])
+        {
+          case "■": // ■は水色
+            imageData.data[i * 4 + 0] = 0; // 赤
+            imageData.data[i * 4 + 1] = 255; // 緑
+            imageData.data[i * 4 + 2] = 255; // 青
+            imageData.data[i * 4 + 3] = 255; // アルファ
+            break;
+          default: // それ以外は黒色
+            imageData.data[i * 4 + 0] = 0; // 赤
+            imageData.data[i * 4 + 1] = 0; // 緑
+            imageData.data[i * 4 + 2] = 0; // 青
+            imageData.data[i * 4 + 3] = 255; // アルファ
+        }
+      }
+
+      // イメージデータを作画する
+      context.putImageData(imageData, 15, 10); // 1匹目
+      context.putImageData(imageData, 40, 10); // 2匹目
+      context.putImageData(imageData, 65, 10); // 3匹目
+      context.putImageData(imageData, 90, 10); // 4匹目
+    </script>
+  </body>
+</html>
