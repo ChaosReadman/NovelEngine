@@ -10,17 +10,9 @@
     <script src="js/gengine.js"></script>
 
     <script>
-        var ClickedX;
-        var ClickedY;
         var bg = (spr) => {
-            spr.context.fillStyle = "rgb(255 165 0)";;
-            spr.context.fillRect(0, 0, spr.context.canvas.width, spr.context.canvas.height);
-        }
-
-        var MebaeToIdle = (spr) => {
-            if (spr.currentFrame == spr.currentFrameTagTo) {
-                spr.setTag("Idle");
-            }
+            gPrim.context.fillStyle = 'rgb(255 165 0)';
+            gPrim.context.fillRect(0, 0, gPrim.context.canvas.width, gPrim.context.canvas.height);
         }
 
         function getRandomInt(max) {
@@ -28,12 +20,15 @@
         }
 
         async function dispatch() {
-            var x = 32 + getRandomInt(640 - 64);
-            var y = 32 + getRandomInt(480 - 64);
-            console.log("dispatched", x, y)
-            var sp = await Sprite.build("Futaba", jsMebae, "Mebae", x, y, 1, 0);
-            sp.addPhysic(MebaeToIdle);
-            gPrim.append(sp);
+            // 最大６０個にしておく
+            if (gPrim.primitives.length <= 60) {
+                // 乱数で座標を生成
+                var x = 32 + getRandomInt(640 - 64);
+                var y = 32 + getRandomInt(480 - 64);
+                var sp = await Sprite.build("Futaba", jsMebae, ["Mebae","Idle"], x, y, 1, 0);
+                gPrim.append(sp);
+                console.log("dispatched", x, y)
+            }
             nextTime = 3 + getRandomInt(5) * 1000;
             setTimeout(dispatch, nextTime);
         }
@@ -47,16 +42,6 @@
             gPrim.run();
             var c = document.getElementById("canvas");
 
-            c.addEventListener('click', function (event) {
-                ClickedX = event.offsetX;
-                ClickedY = event.offsetY;
-                var ctx = this.getContext("2d");
-                ctx.beginPath();
-                ctx.arc(ClickedX, ClickedY, 32, 0, 2 * Math.PI);
-                ctx.stroke();
-                console.log("clicked", ClickedX, ClickedY);
-
-            }, false);
             dispatch();
         }
     </script>
