@@ -6,10 +6,11 @@ class Sprite {
     currentFrameTagFrom = -1;   // frameTagのFrom
     currentFrameTagTo = -1;     // frameTagのTo
     currentFrame = -1;          // framesのフレーム番号
-    xPos;
-    yPos;
-    vx;
-    vy;
+    xPos = -1000;
+    yPos = -1000;
+    vx = 0;
+    vy = 0;
+    parentPrimitive;
     jsonData;
     spriteName = "";
     image;
@@ -17,6 +18,7 @@ class Sprite {
     childs = [];
     physics = [];
     followParent = true;   // 親についていくかどうか
+    durationCount = 0;
 
     appendChild(sprite) {
         this.childs.push(sprite)
@@ -35,7 +37,40 @@ class Sprite {
         return false
     }
 
+    ptInRect(px, py, x, y, w, h) {
+        if (px >= x && px <= (x + w) && py >= y && py <= (y + h)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    isTouched() {
+        var f = this.jsonData.frames[this.currentFrame];
+
+        if (this.ptInRect(this.parentPrimitive.ClickedX, this.parentPrimitive.ClickedY, this.xPos - f.frame.w / 2, this.yPos - f.frame.h, f.frame.w, f.frame.h)) {
+            this.parentPrimitive.ClickedX = -1000;
+            this.parentPrimitive.ClickedY = -1000;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    setTagNames(TagNames) {
+        if (this.jsonData != null) {
+            this.TagNames = TagNames;
+            console.log("setTagNames", TagNames);
+            this.setTag(this.TagNames[0]);
+        }
+    }
+
     setTag(TagName) {
+        console.log("setTag", TagName);
+        if (TagName === undefined) {
+            console.log("koko");
+        }
         if (this.jsonData != null) {
             var tag = this.jsonData.meta.frameTags.filter(function (item) {
                 if (item.name == TagName) {
@@ -45,9 +80,8 @@ class Sprite {
             this.currentFrameTagFrom = tag[0].from;
             this.currentFrameTagTo = tag[0].to;
             this.currentFrame = this.currentFrameTagFrom;   // 初期値
-            
         }
-        this.frameCount = 0;
+        this.durationCount = 0;
     }
 
     constructor(name, jsonData, TagNames, x = 0, y = 0, vx = 0, vy = 0) {
@@ -58,8 +92,9 @@ class Sprite {
         this.yPos = y;
         this.vx = vx;
         this.vy = vy;
-
-        this.setTag(TagNames[0]);
+        if (TagNames != null) {
+            this.setTag(TagNames[0]);
+        }
     }
 
     static async build(name, jsonData, frameTagNames, x = 0, y = 0, vx = 0, vy = 0) {
@@ -77,29 +112,42 @@ class Sprite {
         return sprite;
     }
 
+    // 1/10で呼ばれる
     draw(ctx, parent) {
         if (this.jsonData != null) {
             //        console.log("Sprite::draw");
             var f = this.jsonData.frames[this.currentFrame];
-            // フレーム換算（asepriteは1/1000、しかしブラウザは1/60なので換算する）
-            if (f.duration / 1000 * 60 < this.frameCount) {
-                // 次のフレームへ
+            // フレーム換算（asepriteは1/1000、ループは1/10なので換算する）
+            if (20 * this.durationCount > f.duration) {
+                this.currentFrame++;
+                // カレントフレームの最後まで来た場合
                 if (this.currentFrame == this.currentFrameTagTo) {
-                    if (this.currentFrameTagNum < this.TagNames.length - 1){
-                        this.currentFrameTagNum ++;
-                        this.setTag(this.TagNames[this.currentFrameTagNum])
-                    }else{
-                        this.currentFrame = this.currentFrameTagFrom;
+                    if (this.currentFrameTagNum < this.TagNames.length - 1) {
+                        // 次のタグへ進める
+                        this.currentFrameTagNum++;
                     }
-                } else {
-                    this.currentFrame += 1;
+                    switch (this.TagNames[this.currentFrameTagNum]) {
+                        case "REPEAT":
+                            // 次のタグがなくREPEAT指定されていたら、カレントタグへ戻す
+                            this.currentFrameTagNum--;  // "REPEAT"の前のタグへ戻す
+                            this.currentFrame = this.currentFrameTagFrom;
+                            break;
+                        case "DIE":
+                            // 次のタグがない場合削除
+                            this.currentFrameTagNum--;  // "DIE"の前のタグへ戻す
+                            console.log("DIE");
+                            return false;
+                        default:
+                            // 次のTagがあれば、そのタグをセット
+                            this.setTag(this.TagNames[this.currentFrameTagNum])
+                            break;
+                    }
                 }
                 // あらためて現在のフレームをセット
                 f = this.jsonData.frames[this.currentFrame];
                 // フレームカウントを初期化
-                this.frameCount = 0;
+                this.durationCount = 0;
             }
-            // 自分が親なら自分の位置に表示
             var dispX = -1;
             var dispY = -1;
             var baseX = -1;
@@ -131,12 +179,12 @@ class Sprite {
             );
 
             // Debug:当たり判定を矩形でくくる（当たり判定も起点によって変わる）
-            ctx.beginPath();
-            ctx.rect(this.xPos - f.frame.w / 2, this.yPos - f.frame.h, f.frame.w, f.frame.h);
-            ctx.stroke();
-            ctx.fillStyle = "red";
-            ctx.fillRect(this.xPos - 1, this.yPos, 2, 2);
-            ctx.stroke();
+            // ctx.beginPath();
+            // ctx.rect(this.xPos - f.frame.w / 2, this.yPos - f.frame.h, f.frame.w, f.frame.h);
+            // ctx.stroke();
+            // ctx.fillStyle = "red";
+            // ctx.fillRect(this.xPos - 1, this.yPos, 2, 2);
+            // ctx.stroke();
 
             // 子供がいたら表示する
             for (var i = 0; i < this.childs.length; i++) {
@@ -154,7 +202,7 @@ class Sprite {
         }
 
         // フレームをインクリメントする
-        this.frameCount += 1;
+        this.durationCount++;
         // true：次のフレームも生存 false:次のフレームでは消える
         return true;
     }
@@ -164,9 +212,9 @@ class Primitive {
     primitives = [];
     context = null;
     isRunning = false;
-    loopCount = 0;
-    ClickedX = -1;
-    ClickedY = -1;
+    ClickedX = -1000;
+    ClickedY = -1000;
+    prevTime;
 
     OnClick(e) {
         var rect = e.target.getBoundingClientRect();
@@ -178,6 +226,7 @@ class Primitive {
         this.context.stroke();
         console.log("clicked", this.ClickedX, this.ClickedY);
     }
+
     constructor(context) {
         console.log("constructor");
         this.context = context;
@@ -185,18 +234,24 @@ class Primitive {
         this.context.canvas.addEventListener('click', this.OnClick.bind(this), false);
     }
 
-    loop() {
-        this.loopCount++;
+    loop(timeStamp) {
+        if (this.prevTime === undefined) {
+            this.prevTime = timeStamp;
+        }
+        const elapsed = timeStamp - this.prevTime;
 
-        var i = 0;
-        do {
-            if (this.primitives[i].draw(this.context, null) != true) {
-                this.primitives.slice(i, 1); // 消す
-            } else {
-                i++;
-            }
-        } while (i < this.primitives.length);
-
+        // 10mmSecごとのループにする(１秒に100回)
+        if (elapsed >= 10) {
+            var i = 0;
+            do {
+                if (this.primitives[i].draw(this.context, null) == false) {
+                    this.primitives.splice(i, 1); // 消す
+                } else {
+                    i++;
+                }
+            } while (i < this.primitives.length);
+            this.prevTime = timeStamp;
+        }
         if (this.isRunning) {
             window.requestAnimationFrame(this.loop.bind(this));
         }
@@ -218,6 +273,7 @@ class Primitive {
     }
 
     append(prim) {
+        prim.parentPrimitive = this;
         this.primitives.push(prim)
     }
 }

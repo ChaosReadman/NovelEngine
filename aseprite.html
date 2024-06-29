@@ -15,6 +15,13 @@
             gPrim.context.fillRect(0, 0, gPrim.context.canvas.width, gPrim.context.canvas.height);
         }
 
+        function isPickUp(spr) {
+            if (spr.isTouched()) {
+                // Pickupが終わったら消えるように設定
+                spr.setTagNames(["Pickup","DIE"]);
+            }
+        }
+
         function getRandomInt(max) {
             return Math.floor(Math.random() * max);
         }
@@ -25,8 +32,12 @@
                 // 乱数で座標を生成
                 var x = 32 + getRandomInt(640 - 64);
                 var y = 32 + getRandomInt(480 - 64);
-                var sp = await Sprite.build("Futaba", jsMebae, ["Mebae","Idle"], x, y, 1, 0);
+                // ["Mebae", "Idle","REPEAT"]のように指定すると、Mebae、Idleの順に実行した後、Idleをリピートする
+                // ["Mebae", "Idle","DIE"]の場合はIdleを実行した後Spriteが消える
+                var sp = await Sprite.build("Futaba", jsMebae, ["Mebae", "Idle","REPEAT"], x, y, 1, 0);
+                sp.addPhysic(isPickUp);
                 gPrim.append(sp);
+
                 console.log("dispatched", x, y)
             }
             nextTime = 3 + getRandomInt(5) * 1000;
@@ -36,7 +47,7 @@
         async function init() {
             gPrim = new Primitive(document.getElementById("canvas").getContext("2d"));
 
-            var sprBg = new Sprite("BG", null, "", 0, 0, 0, 0);
+            var sprBg = new Sprite("BG", null, null, 0, 0, 0, 0);
             sprBg.addPhysic(bg);
             gPrim.append(sprBg);
             gPrim.run();
