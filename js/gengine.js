@@ -1,4 +1,11 @@
-
+BaseEnum = {
+    "LEFT": 0x01,
+    "CENTER": 0x02,
+    "RIGHT": 0x04,
+    "TOP": 0x10,
+    "MIDDLE": 0x20,
+    "BOTTOM": 0x40
+};
 
 class Sprite {
     TagNames = [];              // 複数のTagを初期設定可能
@@ -10,7 +17,7 @@ class Sprite {
     yPos = -1000;
     vx = 0;
     vy = 0;
-    parentPrimitive;
+    parentSpriteManager;
     jsonData;
     spriteName = "";
     image;
@@ -19,6 +26,10 @@ class Sprite {
     physics = [];
     followParent = true;   // 親についていくかどうか
     durationCount = 0;
+
+    BasePos = BaseEnum.CENTER | BaseEnum.BOTTOM;
+
+
 
     appendChild(sprite) {
         this.childs.push(sprite)
@@ -49,9 +60,9 @@ class Sprite {
     isTouched() {
         var f = this.jsonData.frames[this.currentFrame];
 
-        if (this.ptInRect(this.parentPrimitive.ClickedX, this.parentPrimitive.ClickedY, this.xPos - f.frame.w / 2, this.yPos - f.frame.h, f.frame.w, f.frame.h)) {
-            this.parentPrimitive.ClickedX = -1000;
-            this.parentPrimitive.ClickedY = -1000;
+        if (this.ptInRect(this.parentSpriteManager.ClickedX, this.parentSpriteManager.ClickedY, this.xPos - f.frame.w / 2, this.yPos - f.frame.h, f.frame.w, f.frame.h)) {
+            this.parentSpriteManager.ClickedX = -1000;
+            this.parentSpriteManager.ClickedY = -1000;
             return true;
         } else {
             return false;
@@ -84,21 +95,20 @@ class Sprite {
         this.durationCount = 0;
     }
 
-    constructor(name, jsonData, TagNames, x = 0, y = 0, vx = 0, vy = 0) {
+    constructor(name, jsonData, TagNames, x = 0, y = 0, basePos = BaseEnum.CENTER | BaseEnum.BOTTOM) {
         this.spriteName = name;
         this.jsonData = jsonData;
         this.TagNames = TagNames;
         this.xPos = x;
         this.yPos = y;
-        this.vx = vx;
-        this.vy = vy;
+        this.BasePos = basePos;
         if (TagNames != null) {
             this.setTag(TagNames[0]);
         }
     }
 
-    static async build(name, jsonData, frameTagNames, x = 0, y = 0, vx = 0, vy = 0) {
-        const sprite = new Sprite(name, jsonData, frameTagNames, x, y, vx, vy);
+    static async build(name, jsonData, frameTagNames, x = 0, y = 0, basePos = BaseEnum.CENTER | BaseEnum.BOTTOM) {
+        const sprite = new Sprite(name, jsonData, frameTagNames, x, y, basePos);
         if (this.ImageDic[name] === undefined) {
             const img = new Image();
             img.src = "images/" + sprite.jsonData.meta.image;  // asepriteのJSONをわりつける
@@ -112,13 +122,13 @@ class Sprite {
         return sprite;
     }
 
-    // 1/10で呼ばれる
+    // 16.67mmSec毎に呼ばれる
     draw(ctx, parent) {
         if (this.jsonData != null) {
             //        console.log("Sprite::draw");
             var f = this.jsonData.frames[this.currentFrame];
-            // フレーム換算（asepriteは1/1000、ループは1/10なので換算する）
-            if (20 * this.durationCount > f.duration) {
+            // フレーム換算（asepriteは1/1000、ループは1/60(16.67mmSec)なので換算する）
+            if (16.67 * this.durationCount > f.duration) {
                 this.currentFrame++;
                 // カレントフレームの最後まで来た場合
                 if (this.currentFrame == this.currentFrameTagTo) {
@@ -154,9 +164,28 @@ class Sprite {
             var baseY = -1;
 
             // スプライトの左右中央＋下端に表示する場合の計算←今後起点をどこにするかの対応も必要となる
-            if (true) {
-                baseX = f.spriteSourceSize.x - f.sourceSize.w / 2;
-                baseY = f.spriteSourceSize.y - f.sourceSize.h;
+            switch (this.BasePos & 0x07) {
+                case BaseEnum.LEFT:
+                    baseX = 0;
+                    break;
+                case BaseEnum.CENTER:
+                    baseX = f.spriteSourceSize.x - f.sourceSize.w / 2;
+                    break;
+                case BaseEnum.RIGHT:
+                    baseX = -f.sourceSize.w;
+                    break;
+            }
+
+            switch (this.BasePos & 0x70) {
+                case BaseEnum.TOP:
+                    baseY = 0;
+                    break;
+                case BaseEnum.MIDDLE:
+                    baseY = f.spriteSourceSize.y - f.sourceSize.h / 2;
+                    break;
+                case BaseEnum.BOTTOM:
+                    baseY = f.spriteSourceSize.y - f.sourceSize.h;
+                    break;
             }
 
             dispX = this.xPos + baseX;
@@ -208,8 +237,8 @@ class Sprite {
     }
 }
 
-class Primitive {
-    primitives = [];
+class SpriteManager {
+    sprites = [];
     context = null;
     isRunning = false;
     ClickedX = -1000;
@@ -221,9 +250,9 @@ class Primitive {
         this.ClickedX = e.clientX - rect.left;
         this.ClickedY = e.clientY - rect.top;
 
-        this.context.beginPath();
-        this.context.arc(this.ClickedX, this.ClickedY, 32, 0, 2 * Math.PI);
-        this.context.stroke();
+        // this.context.beginPath();
+        // this.context.arc(this.ClickedX, this.ClickedY, 32, 0, 2 * Math.PI);
+        // this.context.stroke();
         console.log("clicked", this.ClickedX, this.ClickedY);
     }
 
@@ -240,16 +269,16 @@ class Primitive {
         }
         const elapsed = timeStamp - this.prevTime;
 
-        // 10mmSecごとのループにする(１秒に100回)
-        if (elapsed >= 10) {
+        // 16.66mmSec(60(frame/s) = 1/60 * 1000 mmsec = 16.666mmSec)ごとのループにする
+        if (elapsed >= 16.66) {
             var i = 0;
             do {
-                if (this.primitives[i].draw(this.context, null) == false) {
-                    this.primitives.splice(i, 1); // 消す
+                if (this.sprites[i].draw(this.context, null) == false) {
+                    this.sprites.splice(i, 1); // 消す
                 } else {
                     i++;
                 }
-            } while (i < this.primitives.length);
+            } while (i < this.sprites.length);
             this.prevTime = timeStamp;
         }
         if (this.isRunning) {
@@ -258,22 +287,21 @@ class Primitive {
     }
 
     stop() {
-        console.log("Primitive::stop");
+        console.log("SpriteManager::stop");
         this.isRunning = false;
     }
 
     run() {
         // 二重に起動しない
         if (this.isRunning == false) {
-            var self = this;
-            console.log("Primitive::run");
+            console.log("SpriteManager::run");
             this.isRunning = true;
             window.requestAnimationFrame(this.loop.bind(this));
         }
     }
 
-    append(prim) {
-        prim.parentPrimitive = this;
-        this.primitives.push(prim)
+    append(sprite) {
+        sprite.parentSpriteManager = this;
+        this.sprites.push(sprite)
     }
 }

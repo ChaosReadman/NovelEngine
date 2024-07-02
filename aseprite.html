@@ -10,9 +10,9 @@
     <script src="js/gengine.js"></script>
 
     <script>
-        var bg = (spr) => {
-            gPrim.context.fillStyle = 'rgb(255 165 0)';
-            gPrim.context.fillRect(0, 0, gPrim.context.canvas.width, gPrim.context.canvas.height);
+        function bg(spr) {
+            gSMan.context.fillStyle = 'rgb(255 165 0)';
+            gSMan.context.fillRect(0, 0, gSMan.context.canvas.width, gSMan.context.canvas.height);
         }
 
         function isPickUp(spr) {
@@ -28,30 +28,29 @@
 
         async function dispatch() {
             // 最大６０個にしておく
-            if (gPrim.primitives.length <= 60) {
+            if (gSMan.sprites.length <= 60) {
                 // 乱数で座標を生成
-                var x = 32 + getRandomInt(640 - 64);
-                var y = 32 + getRandomInt(480 - 64);
+                var x = 32 + getRandomInt(640 - 32);
+                var y = 32 + getRandomInt(480 - 32);
                 // ["Mebae", "Idle","REPEAT"]のように指定すると、Mebae、Idleの順に実行した後、Idleをリピートする
                 // ["Mebae", "Idle","DIE"]の場合はIdleを実行した後Spriteが消える
-                var sp = await Sprite.build("Futaba", jsMebae, ["Mebae", "Idle","REPEAT"], x, y, 1, 0);
+                var sp = await Sprite.build("Futaba", jsMebae, ["Mebae", "Idle","REPEAT"], x, y, BaseEnum.CENTER | BaseEnum.BOTTOM);
                 sp.addPhysic(isPickUp);
-                gPrim.append(sp);
+                gSMan.append(sp);
 
                 console.log("dispatched", x, y)
             }
-            nextTime = 3 + getRandomInt(5) * 1000;
+            nextTime = (2 + getRandomInt(5)) * 1000;
             setTimeout(dispatch, nextTime);
         }
 
         async function init() {
-            gPrim = new Primitive(document.getElementById("canvas").getContext("2d"));
+            gSMan = new SpriteManager(document.getElementById("canvas").getContext("2d"));
 
-            var sprBg = new Sprite("BG", null, null, 0, 0, 0, 0);
+            var sprBg = new Sprite("BG", null, null, 0, 0, 0);
             sprBg.addPhysic(bg);
-            gPrim.append(sprBg);
-            gPrim.run();
-            var c = document.getElementById("canvas");
+            gSMan.append(sprBg);
+            gSMan.run();
 
             dispatch();
         }
