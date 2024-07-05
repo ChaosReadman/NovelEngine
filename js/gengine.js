@@ -39,6 +39,11 @@ class Sprite {
         this.physics.push(fn);
     }
 
+    clearPhysics() {
+        this.physics.splice(0);
+        console.log("clearPhysics", this.physics.length);
+    }
+
     isPhysic(fn) {
         for (var i = 0; i < this.physics.length; i++) {
             if (fn === this.physics[i]) {
@@ -77,14 +82,14 @@ class Sprite {
         }
     }
 
-    setTag(TagName) {
-        console.log("setTag", TagName);
-        if (TagName === undefined) {
+    setTag(tagName) {
+        console.log("setTag", tagName);
+        if (tagName === undefined) {
             console.log("koko");
         }
         if (this.jsonData != null) {
             var tag = this.jsonData.meta.frameTags.filter(function (item) {
-                if (item.name == TagName) {
+                if (item.name == tagName) {
                     return item;
                 }
             })
@@ -105,25 +110,30 @@ class Sprite {
         if (TagNames != null) {
             this.setTag(TagNames[0]);
         }
+        if (Sprite.ImageDic[name] === undefined) {
+        } else {
+            this.image = Sprite.ImageDic[name];
+        }
     }
 
     static async build(name, jsonData, frameTagNames, x = 0, y = 0, basePos = BaseEnum.CENTER | BaseEnum.BOTTOM) {
         const sprite = new Sprite(name, jsonData, frameTagNames, x, y, basePos);
-        if (this.ImageDic[name] === undefined) {
+        if (Sprite.ImageDic[name] === undefined) {
             const img = new Image();
             img.src = "images/" + sprite.jsonData.meta.image;  // asepriteのJSONをわりつける
             await img.decode();
             // await 以降はイメージが使えるので、ちゃんと情報も表示できる
             console.log(`loaded pic ! width: ${img.width}, height: ${img.height}`);
-            this.ImageDic[name] = img;
+            Sprite.ImageDic[name] = img;
         }
-        sprite.image = this.ImageDic[name];
+        sprite.image = Sprite.ImageDic[name];
 
         return sprite;
     }
 
     // 16.67mmSec毎に呼ばれる
     draw(ctx, parent) {
+        console.log("draw" + this.jsonData.frames[this.currentFrame]);
         if (this.jsonData != null) {
             //        console.log("Sprite::draw");
             var f = this.jsonData.frames[this.currentFrame];
@@ -136,6 +146,7 @@ class Sprite {
                         // 次のタグへ進める
                         this.currentFrameTagNum++;
                     }
+                    console.log("TagName = " + this.TagNames[this.currentFrameTagNum]);
                     switch (this.TagNames[this.currentFrameTagNum]) {
                         case "REPEAT":
                             // 次のタグがなくREPEAT指定されていたら、カレントタグへ戻す
@@ -144,7 +155,7 @@ class Sprite {
                             break;
                         case "DIE":
                             // 次のタグがない場合削除
-                            this.currentFrameTagNum--;  // "DIE"の前のタグへ戻す
+//                            this.currentFrameTagNum--;  // "DIE"の前のタグへ戻す
                             console.log("DIE");
                             return false;
                         default:
@@ -254,6 +265,14 @@ class SpriteManager {
         // this.context.arc(this.ClickedX, this.ClickedY, 32, 0, 2 * Math.PI);
         // this.context.stroke();
         console.log("clicked", this.ClickedX, this.ClickedY);
+        for (var i = 0; i < 20; i++) {
+            var sp = new Sprite("Perticle", jsPerticle, ["Idle", "DIE"], this.ClickedX, this.ClickedY, BaseEnum.CENTER | BaseEnum.MIDDLE);
+            sp.vx = getRandomInt(20) - 10;
+            sp.vy = getRandomInt(20) - 10;
+
+            sp.addPhysic(perticle);
+            this.append(sp);
+        }
     }
 
     constructor(context) {
