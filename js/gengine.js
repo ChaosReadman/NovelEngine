@@ -134,12 +134,9 @@ class Sprite {
     // 16.67mmSec毎に呼ばれる
     draw(ctx, parent) {
         if (this.jsonData != null) {
-            console.log("draw" + this.jsonData.frames[this.currentFrame]);
-            //        console.log("Sprite::draw");
-
             var f = this.jsonData.frames[this.currentFrame];
             // フレーム換算（asepriteは1/1000、ループは1/60(16.67mmSec)なので換算する）
-            if (16.67 * this.durationCount > f.duration) {
+            if (16.67 * this.durationCount >= f.duration) {
                 if (this.currentFrame < this.jsonData.frames.length-1){
                     this.currentFrame++;
                 }
@@ -292,7 +289,9 @@ class SpriteManager {
         const elapsed = timeStamp - this.prevTime;
 
         // 16.66mmSec(60(frame/s) = 1/60 * 1000 mmsec = 16.666mmSec)ごとのループにする
-        if (elapsed >= 16.66) {
+        if (elapsed >= 15) {
+            // 試してみると16とか15で計算したほうがいいみたい？
+            console.log("elapsed:" + elapsed);
             var i = 0;
             do {
                 if (this.sprites[i].draw(this.context, null) == false) {
