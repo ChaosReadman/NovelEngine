@@ -136,10 +136,13 @@ class Sprite {
         if (this.jsonData != null) {
             console.log("draw" + this.jsonData.frames[this.currentFrame]);
             //        console.log("Sprite::draw");
+
             var f = this.jsonData.frames[this.currentFrame];
             // フレーム換算（asepriteは1/1000、ループは1/60(16.67mmSec)なので換算する）
             if (16.67 * this.durationCount > f.duration) {
-                this.currentFrame++;
+                if (this.currentFrame < this.jsonData.frames.length-1){
+                    this.currentFrame++;
+                }
                 // カレントフレームの最後まで来た場合
                 if (this.currentFrame == this.currentFrameTagTo) {
                     if (this.currentFrameTagNum < this.TagNames.length - 1) {
@@ -155,7 +158,7 @@ class Sprite {
                             break;
                         case "DIE":
                             // 次のタグがない場合削除
-//                            this.currentFrameTagNum--;  // "DIE"の前のタグへ戻す
+                            //                            this.currentFrameTagNum--;  // "DIE"の前のタグへ戻す
                             console.log("DIE");
                             return false;
                         default:
