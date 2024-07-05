@@ -133,8 +133,8 @@ class Sprite {
 
     // 16.67mmSec毎に呼ばれる
     draw(ctx, parent) {
-        console.log("draw" + this.jsonData.frames[this.currentFrame]);
         if (this.jsonData != null) {
+            console.log("draw" + this.jsonData.frames[this.currentFrame]);
             //        console.log("Sprite::draw");
             var f = this.jsonData.frames[this.currentFrame];
             // フレーム換算（asepriteは1/1000、ループは1/60(16.67mmSec)なので換算する）
