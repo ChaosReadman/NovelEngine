@@ -7,7 +7,7 @@ var jsPerticle = {
       "trimmed": true,
       "spriteSourceSize": { "x": 10, "y": 10, "w": 12, "h": 12 },
       "sourceSize": { "w": 32, "h": 32 },
-      "duration": 1000
+      "duration": 500
     }
   ],
   "meta": {

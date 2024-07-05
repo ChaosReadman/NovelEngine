@@ -52,12 +52,12 @@
         }
 
         async function init() {
-            var sprPerticleDummy = await Sprite.build("Perticle", jsPerticle, ["Idle", "DIE"], -1000, -1000, BaseEnum.CENTER | BaseEnum.BOTTOM);
-
             gSMan = new SpriteManager(document.getElementById("canvas").getContext("2d"));
+            // sprBgはスプライトがなく、Physicsで画面をクリアするだけ
             var sprBg = new Sprite("BG", null, null, 0, 0, 0);
             sprBg.addPhysic(bg);
             gSMan.append(sprBg);
+            gSMan.enablePerticle("Perticle","perticle.png",20,30);
 
             gSMan.run();
 

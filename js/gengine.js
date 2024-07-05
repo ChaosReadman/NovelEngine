@@ -116,6 +116,17 @@ class Sprite {
         }
     }
 
+    static async LoadImage(name, ImageName) {
+        if (Sprite.ImageDic[name] === undefined) {
+            const img = new Image();
+            img.src = "images/" + ImageName;  // asepriteのJSONをわりつける
+            await img.decode();
+            // await 以降はイメージが使えるので、ちゃんと情報も表示できる
+            console.log(`loaded pic ! width: ${img.width}, height: ${img.height}`);
+            Sprite.ImageDic[name] = img;
+        }
+    }
+
     static async build(name, jsonData, frameTagNames, x = 0, y = 0, basePos = BaseEnum.CENTER | BaseEnum.BOTTOM) {
         const sprite = new Sprite(name, jsonData, frameTagNames, x, y, basePos);
         if (Sprite.ImageDic[name] === undefined) {
@@ -137,7 +148,7 @@ class Sprite {
             var f = this.jsonData.frames[this.currentFrame];
             // フレーム換算（asepriteは1/1000、ループは1/60(16.67mmSec)なので換算する）
             if (16.67 * this.durationCount >= f.duration) {
-                if (this.currentFrame < this.jsonData.frames.length-1){
+                if (this.currentFrame < this.jsonData.frames.length - 1) {
                     this.currentFrame++;
                 }
                 // カレントフレームの最後まで来た場合
@@ -255,6 +266,29 @@ class SpriteManager {
     ClickedX = -1000;
     ClickedY = -1000;
     prevTime;
+    bClickPerticle = false;
+
+    PerticleNumber = 0;
+    PerticleSpeed = 0;
+
+    async enablePerticle(name, imageName, PerticleNumber, PerticleSpeed) {
+        await Sprite.LoadImage("Perticle", "perticle.png");
+        this.PerticleNumber = PerticleNumber;
+        this.PerticleSpeed = PerticleSpeed;
+        this.bClickPerticle = true;
+    }
+
+    showPerticle() {
+        if (this.bClickPerticle) {
+            for (var i = 0; i < this.PerticleNumber; i++) {
+                var sp = new Sprite("Perticle", jsPerticle, ["Idle", "DIE"], this.ClickedX, this.ClickedY, BaseEnum.CENTER | BaseEnum.MIDDLE);
+                sp.vx = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed)/10;
+                sp.vy = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed)/10;
+                sp.addPhysic(perticle);
+                this.append(sp);
+            }
+        }
+    }
 
     OnClick(e) {
         var rect = e.target.getBoundingClientRect();
@@ -265,14 +299,7 @@ class SpriteManager {
         // this.context.arc(this.ClickedX, this.ClickedY, 32, 0, 2 * Math.PI);
         // this.context.stroke();
         console.log("clicked", this.ClickedX, this.ClickedY);
-        for (var i = 0; i < 20; i++) {
-            var sp = new Sprite("Perticle", jsPerticle, ["Idle", "DIE"], this.ClickedX, this.ClickedY, BaseEnum.CENTER | BaseEnum.MIDDLE);
-            sp.vx = getRandomInt(20) - 10;
-            sp.vy = getRandomInt(20) - 10;
-
-            sp.addPhysic(perticle);
-            this.append(sp);
-        }
+        this.showPerticle();
     }
 
     constructor(context) {
