@@ -2,7 +2,7 @@ var jsMebae = {
   "frames": [
     {
       "filename": "Futaba (Futaba) #Mebae 0.aseprite",
-      "frame": { "x": 82, "y": 90, "w": 19, "h": 7 },
+      "frame": { "x": 19, "y": 103, "w": 19, "h": 7 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 23, "y": 121, "w": 19, "h": 7 },
@@ -11,7 +11,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Mebae 1.aseprite",
-      "frame": { "x": 101, "y": 90, "w": 19, "h": 4 },
+      "frame": { "x": 79, "y": 104, "w": 19, "h": 4 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 23, "y": 124, "w": 19, "h": 4 },
@@ -20,7 +20,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Mebae 2.aseprite",
-      "frame": { "x": 82, "y": 90, "w": 19, "h": 7 },
+      "frame": { "x": 19, "y": 103, "w": 19, "h": 7 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 23, "y": 121, "w": 19, "h": 7 },
@@ -29,7 +29,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Mebae 3.aseprite",
-      "frame": { "x": 101, "y": 90, "w": 19, "h": 4 },
+      "frame": { "x": 79, "y": 104, "w": 19, "h": 4 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 23, "y": 124, "w": 19, "h": 4 },
@@ -38,7 +38,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Mebae 4.aseprite",
-      "frame": { "x": 19, "y": 90, "w": 19, "h": 15 },
+      "frame": { "x": 0, "y": 103, "w": 19, "h": 15 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 23, "y": 113, "w": 19, "h": 15 },
@@ -47,7 +47,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Mebae 5.aseprite",
-      "frame": { "x": 0, "y": 67, "w": 19, "h": 30 },
+      "frame": { "x": 41, "y": 86, "w": 19, "h": 30 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 23, "y": 98, "w": 19, "h": 30 },
@@ -56,7 +56,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Mebae 6.aseprite",
-      "frame": { "x": 19, "y": 67, "w": 19, "h": 23 },
+      "frame": { "x": 60, "y": 86, "w": 19, "h": 23 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 23, "y": 105, "w": 19, "h": 23 },
@@ -65,7 +65,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Mebae 7.aseprite",
-      "frame": { "x": 0, "y": 0, "w": 41, "h": 39 },
+      "frame": { "x": 42, "y": 47, "w": 41, "h": 39 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 12, "y": 89, "w": 41, "h": 39 },
@@ -74,7 +74,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Mebae 8.aseprite",
-      "frame": { "x": 41, "y": 33, "w": 41, "h": 31 },
+      "frame": { "x": 83, "y": 47, "w": 41, "h": 31 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 12, "y": 97, "w": 41, "h": 31 },
@@ -83,7 +83,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Mebae 9.aseprite",
-      "frame": { "x": 82, "y": 64, "w": 41, "h": 26 },
+      "frame": { "x": 83, "y": 78, "w": 41, "h": 26 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 12, "y": 102, "w": 41, "h": 26 },
@@ -92,7 +92,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Idle 0.aseprite",
-      "frame": { "x": 82, "y": 64, "w": 41, "h": 26 },
+      "frame": { "x": 83, "y": 78, "w": 41, "h": 26 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 12, "y": 102, "w": 41, "h": 26 },
@@ -101,7 +101,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Idle 1.aseprite",
-      "frame": { "x": 41, "y": 64, "w": 41, "h": 27 },
+      "frame": { "x": 0, "y": 76, "w": 41, "h": 27 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 12, "y": 101, "w": 41, "h": 27 },
@@ -110,7 +110,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Idle 2.aseprite",
-      "frame": { "x": 0, "y": 39, "w": 41, "h": 28 },
+      "frame": { "x": 0, "y": 48, "w": 41, "h": 28 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 12, "y": 100, "w": 41, "h": 28 },
@@ -119,7 +119,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Idle 3.aseprite",
-      "frame": { "x": 41, "y": 64, "w": 41, "h": 27 },
+      "frame": { "x": 0, "y": 76, "w": 41, "h": 27 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 12, "y": 101, "w": 41, "h": 27 },
@@ -128,46 +128,46 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Pickup 0.aseprite",
-      "frame": { "x": 83, "y": 0, "w": 42, "h": 32 },
+      "frame": { "x": 42, "y": 0, "w": 42, "h": 47 },
       "rotated": false,
       "trimmed": true,
-      "spriteSourceSize": { "x": 11, "y": 96, "w": 42, "h": 32 },
+      "spriteSourceSize": { "x": 11, "y": 81, "w": 42, "h": 47 },
       "sourceSize": { "w": 64, "h": 128 },
       "duration": 200
     },
     {
       "filename": "Futaba (Futaba) #Pickup 1.aseprite",
-      "frame": { "x": 83, "y": 0, "w": 42, "h": 32 },
+      "frame": { "x": 42, "y": 0, "w": 42, "h": 47 },
       "rotated": false,
       "trimmed": true,
-      "spriteSourceSize": { "x": 11, "y": 92, "w": 42, "h": 32 },
+      "spriteSourceSize": { "x": 11, "y": 77, "w": 42, "h": 47 },
       "sourceSize": { "w": 64, "h": 128 },
       "duration": 200
     },
     {
       "filename": "Futaba (Futaba) #Pickup 2.aseprite",
-      "frame": { "x": 83, "y": 0, "w": 42, "h": 32 },
+      "frame": { "x": 42, "y": 0, "w": 42, "h": 47 },
       "rotated": false,
       "trimmed": true,
-      "spriteSourceSize": { "x": 11, "y": 65, "w": 42, "h": 32 },
+      "spriteSourceSize": { "x": 11, "y": 50, "w": 42, "h": 47 },
       "sourceSize": { "w": 64, "h": 128 },
       "duration": 200
     },
     {
       "filename": "Futaba (Futaba) #Pickup 3.aseprite",
-      "frame": { "x": 41, "y": 0, "w": 42, "h": 33 },
+      "frame": { "x": 0, "y": 0, "w": 42, "h": 48 },
       "rotated": false,
       "trimmed": true,
-      "spriteSourceSize": { "x": 12, "y": 51, "w": 42, "h": 33 },
+      "spriteSourceSize": { "x": 12, "y": 36, "w": 42, "h": 48 },
       "sourceSize": { "w": 64, "h": 128 },
       "duration": 200
     },
     {
       "filename": "Futaba (Futaba) #Pickup 4.aseprite",
-      "frame": { "x": 83, "y": 32, "w": 42, "h": 32 },
+      "frame": { "x": 84, "y": 0, "w": 42, "h": 47 },
       "rotated": false,
       "trimmed": true,
-      "spriteSourceSize": { "x": 12, "y": 26, "w": 42, "h": 32 },
+      "spriteSourceSize": { "x": 12, "y": 11, "w": 42, "h": 47 },
       "sourceSize": { "w": 64, "h": 128 },
       "duration": 200
     }
@@ -177,7 +177,7 @@ var jsMebae = {
     "version": "1.3.7-x64",
     "image": "Futaba.png",
     "format": "RGBA8888",
-    "size": { "w": 125, "h": 105 },
+    "size": { "w": 126, "h": 118 },
     "scale": "1",
     "frameTags": [
       { "name": "Mebae", "from": 0, "to": 9, "direction": "forward", "color": "#000000ff" },

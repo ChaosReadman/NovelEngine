@@ -116,7 +116,7 @@ class Sprite {
         }
     }
 
-    static async LoadJSImage(name, jsonData){
+    static async LoadJSImage(name, jsonData) {
         await Sprite.LoadImage(name, jsonData.meta.image);
     }
 
@@ -271,7 +271,8 @@ class SpriteManager {
     showPerticle() {
         if (this.bClickPerticle) {
             for (var i = 0; i < this.PerticleNumber; i++) {
-                var sp = new Sprite("Perticle", jsPerticle, ["Idle", "DIE"], this.ClickedX, this.ClickedY, BaseEnum.CENTER | BaseEnum.MIDDLE);
+                var scale = (5 + getRandomInt(5)) / 10.0;
+                var sp = new Sprite("Perticle", jsPerticle, ["Idle", "DIE"], this.ClickedX, this.ClickedY, BaseEnum.CENTER | BaseEnum.MIDDLE, scale);
                 sp.vx = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed) / 10;
                 sp.vy = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed) / 10;
                 sp.addPhysic(perticle);
