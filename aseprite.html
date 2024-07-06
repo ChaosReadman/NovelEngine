@@ -33,7 +33,7 @@
             return Math.floor(Math.random() * max);
         }
 
-        async function dispatch() {
+        function dispatch() {
             // 最大６０個にしておく
             if (gSMan.sprites.filter((sprite) => sprite.spriteName == "Futaba").length <= 60) {
                 // 乱数で座標を生成
@@ -41,7 +41,7 @@
                 var y = 32 + getRandomInt(480 - 32);
                 // ["Mebae", "Idle","REPEAT"]のように指定すると、Mebae、Idleの順に実行した後、Idleをリピートする
                 // ["Mebae", "Idle","DIE"]の場合はIdleを実行した後Spriteが消える
-                var sp = await Sprite.build("Futaba", jsMebae, ["Mebae", "Idle", "REPEAT"], x, y, BaseEnum.CENTER | BaseEnum.BOTTOM);
+                var sp = new Sprite("Futaba", jsMebae, ["Mebae", "Idle", "REPEAT"], x, y, BaseEnum.CENTER | BaseEnum.BOTTOM);
                 sp.addPhysic(isPickUp);
                 gSMan.append(sp);
 
@@ -52,12 +52,15 @@
         }
 
         async function init() {
+            // Sprite用の画像は最初に読んでおくことにする
+            await Sprite.LoadJSImage("Futaba", jsMebae);
+            
             gSMan = new SpriteManager(document.getElementById("canvas").getContext("2d"));
             // sprBgはスプライトがなく、Physicsで画面をクリアするだけ
             var sprBg = new Sprite("BG", null, null, 0, 0, 0);
             sprBg.addPhysic(bg);
             gSMan.append(sprBg);
-            gSMan.enablePerticle("Perticle","perticle.png",20,30);
+            await gSMan.enablePerticle("Perticle", "perticle.png", 20, 30);
 
             gSMan.run();
 

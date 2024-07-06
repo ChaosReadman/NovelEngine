@@ -26,10 +26,9 @@ class Sprite {
     physics = [];
     followParent = true;   // 親についていくかどうか
     durationCount = 0;
+    scale = 1.0;
 
     BasePos = BaseEnum.CENTER | BaseEnum.BOTTOM;
-
-
 
     appendChild(sprite) {
         this.childs.push(sprite)
@@ -100,20 +99,25 @@ class Sprite {
         this.durationCount = 0;
     }
 
-    constructor(name, jsonData, TagNames, x = 0, y = 0, basePos = BaseEnum.CENTER | BaseEnum.BOTTOM) {
+    constructor(name, jsonData, TagNames, x = 0, y = 0, basePos = BaseEnum.CENTER | BaseEnum.BOTTOM, scale = 1.0) {
         this.spriteName = name;
         this.jsonData = jsonData;
         this.TagNames = TagNames;
         this.xPos = x;
         this.yPos = y;
         this.BasePos = basePos;
+        this.scale = scale;
         if (TagNames != null) {
             this.setTag(TagNames[0]);
         }
-        if (Sprite.ImageDic[name] === undefined) {
-        } else {
+        // スプライトのイメージは前もって読み込んでおく必要がある
+        if (jsonData != null) {
             this.image = Sprite.ImageDic[name];
         }
+    }
+
+    static async LoadJSImage(name, jsonData){
+        await Sprite.LoadImage(name, jsonData.meta.image);
     }
 
     static async LoadImage(name, ImageName) {
@@ -125,21 +129,7 @@ class Sprite {
             console.log(`loaded pic ! width: ${img.width}, height: ${img.height}`);
             Sprite.ImageDic[name] = img;
         }
-    }
-
-    static async build(name, jsonData, frameTagNames, x = 0, y = 0, basePos = BaseEnum.CENTER | BaseEnum.BOTTOM) {
-        const sprite = new Sprite(name, jsonData, frameTagNames, x, y, basePos);
-        if (Sprite.ImageDic[name] === undefined) {
-            const img = new Image();
-            img.src = "images/" + sprite.jsonData.meta.image;  // asepriteのJSONをわりつける
-            await img.decode();
-            // await 以降はイメージが使えるので、ちゃんと情報も表示できる
-            console.log(`loaded pic ! width: ${img.width}, height: ${img.height}`);
-            Sprite.ImageDic[name] = img;
-        }
-        sprite.image = Sprite.ImageDic[name];
-
-        return sprite;
+        return Sprite.ImageDic[name];
     }
 
     // 16.67mmSec毎に呼ばれる
@@ -191,10 +181,10 @@ class Sprite {
                     baseX = 0;
                     break;
                 case BaseEnum.CENTER:
-                    baseX = f.spriteSourceSize.x - f.sourceSize.w / 2;
+                    baseX = (f.spriteSourceSize.x - f.sourceSize.w / 2) * this.scale;
                     break;
                 case BaseEnum.RIGHT:
-                    baseX = -f.sourceSize.w;
+                    baseX = -f.sourceSize.w * this.scale;
                     break;
             }
 
@@ -203,10 +193,10 @@ class Sprite {
                     baseY = 0;
                     break;
                 case BaseEnum.MIDDLE:
-                    baseY = f.spriteSourceSize.y - f.sourceSize.h / 2;
+                    baseY = (f.spriteSourceSize.y - f.sourceSize.h / 2) * this.scale;
                     break;
                 case BaseEnum.BOTTOM:
-                    baseY = f.spriteSourceSize.y - f.sourceSize.h;
+                    baseY = (f.spriteSourceSize.y - f.sourceSize.h) * this.scale;
                     break;
             }
 
@@ -225,8 +215,8 @@ class Sprite {
                 f.frame.h,      // sHeight (元画像の切り抜きサイズ：高)
                 dispX,          // dx
                 dispY,          // dy
-                f.frame.w,      // 圧縮幅
-                f.frame.h       // 圧縮高
+                f.frame.w * this.scale,      // 圧縮幅
+                f.frame.h * this.scale       // 圧縮高
             );
 
             // Debug:当たり判定を矩形でくくる（当たり判定も起点によって変わる）
@@ -282,8 +272,8 @@ class SpriteManager {
         if (this.bClickPerticle) {
             for (var i = 0; i < this.PerticleNumber; i++) {
                 var sp = new Sprite("Perticle", jsPerticle, ["Idle", "DIE"], this.ClickedX, this.ClickedY, BaseEnum.CENTER | BaseEnum.MIDDLE);
-                sp.vx = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed)/10;
-                sp.vy = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed)/10;
+                sp.vx = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed) / 10;
+                sp.vy = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed) / 10;
                 sp.addPhysic(perticle);
                 this.append(sp);
             }
