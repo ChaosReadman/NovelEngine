@@ -16,11 +16,6 @@
             gSMan.context.fillRect(0, 0, gSMan.context.canvas.width, gSMan.context.canvas.height);
         }
 
-        function perticle(spr) {
-            spr.xPos += spr.vx;
-            spr.yPos += spr.vy;
-        }
-
         function isPickUp(spr) {
             if (spr.isTouched()) {
                 // Pickupが終わったら消えるように設定

@@ -267,6 +267,11 @@ class SpriteManager {
         this.PerticleSpeed = PerticleSpeed;
         this.bClickPerticle = true;
     }
+    
+    perticle(spr) {
+        spr.xPos += spr.vx;
+        spr.yPos += spr.vy;
+    }
 
     showPerticle() {
         if (this.bClickPerticle) {
@@ -275,7 +280,7 @@ class SpriteManager {
                 var sp = new Sprite("Perticle", jsPerticle, ["Idle", "DIE"], this.ClickedX, this.ClickedY, BaseEnum.CENTER | BaseEnum.MIDDLE, scale);
                 sp.vx = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed) / 10;
                 sp.vy = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed) / 10;
-                sp.addPhysic(perticle);
+                sp.addPhysic(this.perticle);
                 this.append(sp);
             }
         }
