@@ -228,12 +228,18 @@ class Sprite {
             // ctx.stroke();
 
             // 子供がいたら表示する
-            for (var i = 0; i < this.childs.length; i++) {
-                this.childs[i].draw(ctx, this);
-            }
+            var i = 0;
+            do {
+                if (this.childs[i].draw(this.context, null) == false) {
+                    this.childs.splice(i, 1); // 消す
+                } else {
+                    i++;
+                }
+            } while (i < this.childs.length);
         }
 
         // 表示をしたのちに、次のフレームの位置を計算しておく
+        // phisics側でも消せるようにするべきか？
         if (this.physics.length > 0) {
             var i = 0;
             do {
