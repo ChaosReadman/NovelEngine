@@ -229,13 +229,13 @@ class Sprite {
 
             // 子供がいたら表示する
             var i = 0;
-            do {
+            while (i < this.childs.length) {
                 if (this.childs[i].draw(this.context, null) == false) {
                     this.childs.splice(i, 1); // 消す
                 } else {
                     i++;
                 }
-            } while (i < this.childs.length);
+            }
         }
 
         // 表示をしたのちに、次のフレームの位置を計算しておく
