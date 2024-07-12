@@ -32,8 +32,8 @@
             // 最大６０個にしておく
             if (gSMan.sprites.filter((sprite) => sprite.spriteName == "Futaba").length <= 60) {
                 // 乱数で座標を生成
-                var x = 32 + getRandomInt(640 - 32);
-                var y = 32 + getRandomInt(480 - 32);
+                var x = 64 + getRandomInt(1280 - 64);
+                var y = 340 + getRandomInt(340 - 64);
                 // ["Mebae", "Idle","REPEAT"]のように指定すると、Mebae、Idleの順に実行した後、Idleをリピートする
                 // ["Mebae", "Idle","DIE"]の場合はIdleを実行した後Spriteが消える
                 var sp = new Sprite("Futaba", jsMebae, ["Mebae", "Idle", "REPEAT"], x, y, Sprite.Pivot.CENTER | Sprite.Pivot.BOTTOM);
@@ -42,7 +42,7 @@
 
                 console.log("dispatched", x, y)
             }
-            nextTime = (2 + getRandomInt(5)) * 1000;
+            nextTime = (getRandomInt(5)) * 1000;
             setTimeout(dispatch, nextTime);
         }
 
@@ -52,9 +52,15 @@
             
             gSMan = new SpriteManager(document.getElementById("canvas").getContext("2d"));
             // sprBgはスプライトがなく、Physicsで画面をクリアするだけ
-            var sprBg = new Sprite("BG", null, null, 0, 0, 0);
-            sprBg.addPhysic(bg);
-            gSMan.append(sprBg);
+            // var sprBg = new Sprite("BG", null, null, 0, 0, 0);
+            // sprBg.addPhysic(bg);
+            // gSMan.append(sprBg);
+
+            // BGはただ表示するだけなのでSpriteクラスを使わない
+            await gSMan.SetBG("BG","bokuti_resize.png");
+
+            // タイルマップを使った背景表示はSpriteクラスでTileを含んだJSONが必要となる
+            
             await gSMan.enablePerticle("Perticle", "perticle.png", 20, 30);
 
             gSMan.run();
@@ -68,11 +74,9 @@
 <body onload="init();">
     <center>
         <h2>ゲームエンジンの例</h2>
-        <canvas id="canvas" width="640" height="480" />
+        <canvas id="canvas" width="1280" height="680" />
     </center>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-
 </body>
 
 </html>

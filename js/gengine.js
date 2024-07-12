@@ -1,5 +1,5 @@
 
-class ImageLoader{
+class ImageLoader {
     static ImageDic = [];
 
     static async LoadJSImage(name, jsonData) {
@@ -28,7 +28,7 @@ class Sprite {
         "MIDDLE": 0x20,
         "BOTTOM": 0x40
     };
-    
+
     TagNames = [];              // 複数のTagを初期設定可能
     currentFrameTagNum = 0;    // currentFrameTagnamesの現在のタグ番号
     currentFrameTagFrom = -1;   // frameTagのFrom
@@ -41,7 +41,7 @@ class Sprite {
     parentSpriteManager;
     jsonData;
     spriteName = "";
-    image;
+    Image;
 
     childs = [];
     physics = [];
@@ -133,7 +133,7 @@ class Sprite {
         }
         // スプライトのイメージは前もって読み込んでおく必要がある
         if (jsonData != null) {
-            this.image = ImageLoader.ImageDic[name];
+            this.Image = ImageLoader.ImageDic[name];
         }
     }
 
@@ -213,7 +213,7 @@ class Sprite {
                 dispX += parent.xPos;
                 dispY += parent.yPos;
             }
-            ctx.drawImage(this.image,
+            ctx.drawImage(this.Image,
                 f.frame.x,      // sx      (元画像の切り抜き始点X)
                 f.frame.y,      // sy      (元画像の切り抜き始点Y)
                 f.frame.w,      // sWidth  (元画像の切り抜きサイズ：幅)
@@ -260,8 +260,30 @@ class Sprite {
     }
 }
 
+class BG {
+    Name = "";
+    constructor(name) {
+        this.Name = name;
+    }
+
+    draw(ctx) {
+        var img = ImageLoader.ImageDic[this.Name];
+        ctx.drawImage(img,
+            0,              // sx      (元画像の切り抜き始点X)
+            0,              // sy      (元画像の切り抜き始点Y)
+            img.width,      // sWidth  (元画像の切り抜きサイズ：幅)
+            img.height,     // sHeight (元画像の切り抜きサイズ：高)
+            (ctx.canvas.width - img.width) / 2,          // dx
+            (ctx.canvas.height - img.height) / 2,          // dy
+            img.width,      // 圧縮幅
+            img.height       // 圧縮高
+        );
+    }
+}
+
 class SpriteManager {
     sprites = [];
+    BGs = [];   // BG用の画像データ
     context = null;
     isRunning = false;
     ClickedX = -1000;
@@ -278,13 +300,19 @@ class SpriteManager {
         this.PerticleSpeed = PerticleSpeed;
         this.bClickPerticle = true;
     }
-    
+
+    async SetBG(name, imageName) {
+        await ImageLoader.LoadImage(name, imageName);
+        var bg = new BG(name);
+        this.BGs.push(bg);
+    }
+
     perticle(spr) {
         spr.xPos += spr.vx;
         spr.yPos += spr.vy;
     }
 
-    showPerticle() {
+    drawPerticle() {
         if (this.bClickPerticle) {
             for (var i = 0; i < this.PerticleNumber; i++) {
                 var scale = (5 + getRandomInt(5)) / 10.0;
@@ -306,7 +334,7 @@ class SpriteManager {
         // this.context.arc(this.ClickedX, this.ClickedY, 32, 0, 2 * Math.PI);
         // this.context.stroke();
         console.log("clicked", this.ClickedX, this.ClickedY);
-        this.showPerticle();
+        this.drawPerticle();
     }
 
     constructor(context) {
@@ -326,14 +354,20 @@ class SpriteManager {
         if (elapsed >= 15) {
             // 試してみると16とか15で計算したほうがいいみたい？
             console.log("elapsed:" + elapsed);
+            // 最初にBGを描画（画像をCanvas中央に表示するだけ）
             var i = 0;
-            do {
+            for (i = 0; i < this.BGs.length; i++) {
+                this.BGs[i].draw(this.context);
+            }
+
+            i = 0;
+            while (i < this.sprites.length) {
                 if (this.sprites[i].draw(this.context, null) == false) {
                     this.sprites.splice(i, 1); // 消す
                 } else {
                     i++;
                 }
-            } while (i < this.sprites.length);
+            }
             this.prevTime = timeStamp;
         }
         if (this.isRunning) {

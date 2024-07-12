@@ -65,25 +65,25 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Mebae 7.aseprite",
-      "frame": { "x": 82, "y": 0, "w": 40, "h": 39 },
+      "frame": { "x": 82, "y": 0, "w": 40, "h": 40 },
       "rotated": false,
       "trimmed": true,
-      "spriteSourceSize": { "x": 12, "y": 89, "w": 40, "h": 39 },
+      "spriteSourceSize": { "x": 12, "y": 88, "w": 40, "h": 40 },
       "sourceSize": { "w": 64, "h": 128 },
       "duration": 100
     },
     {
       "filename": "Futaba (Futaba) #Mebae 8.aseprite",
-      "frame": { "x": 82, "y": 39, "w": 40, "h": 31 },
+      "frame": { "x": 82, "y": 40, "w": 40, "h": 32 },
       "rotated": false,
       "trimmed": true,
-      "spriteSourceSize": { "x": 12, "y": 97, "w": 40, "h": 31 },
+      "spriteSourceSize": { "x": 12, "y": 96, "w": 40, "h": 32 },
       "sourceSize": { "w": 64, "h": 128 },
       "duration": 100
     },
     {
       "filename": "Futaba (Futaba) #Mebae 9.aseprite",
-      "frame": { "x": 80, "y": 70, "w": 40, "h": 26 },
+      "frame": { "x": 80, "y": 72, "w": 40, "h": 26 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 12, "y": 102, "w": 40, "h": 26 },
@@ -92,7 +92,7 @@ var jsMebae = {
     },
     {
       "filename": "Futaba (Futaba) #Idle 0.aseprite",
-      "frame": { "x": 80, "y": 70, "w": 40, "h": 26 },
+      "frame": { "x": 80, "y": 72, "w": 40, "h": 26 },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": { "x": 12, "y": 102, "w": 40, "h": 26 },
