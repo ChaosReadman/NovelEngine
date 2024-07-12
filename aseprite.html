@@ -29,10 +29,10 @@
         }
 
         function dispatch() {
-            // 最大６０個にしておく
-            if (gSMan.sprites.filter((sprite) => sprite.spriteName == "Futaba").length <= 60) {
+            // 最大120個
+            if (gSMan.sprites.filter((sprite) => sprite.spriteName == "Futaba").length <= 120) {
                 // 乱数で座標を生成
-                var x = 64 + getRandomInt(1280 - 64);
+                var x = 64 + getRandomInt(1280 - 128);
                 var y = 340 + getRandomInt(340 - 64);
                 // ["Mebae", "Idle","REPEAT"]のように指定すると、Mebae、Idleの順に実行した後、Idleをリピートする
                 // ["Mebae", "Idle","DIE"]の場合はIdleを実行した後Spriteが消える
@@ -42,7 +42,7 @@
 
                 console.log("dispatched", x, y)
             }
-            nextTime = (getRandomInt(5)) * 1000;
+            nextTime = (getRandomInt(3)) * 1000;
             setTimeout(dispatch, nextTime);
         }
 
