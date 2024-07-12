@@ -36,7 +36,7 @@
                 var y = 32 + getRandomInt(480 - 32);
                 // ["Mebae", "Idle","REPEAT"]のように指定すると、Mebae、Idleの順に実行した後、Idleをリピートする
                 // ["Mebae", "Idle","DIE"]の場合はIdleを実行した後Spriteが消える
-                var sp = new Sprite("Futaba", jsMebae, ["Mebae", "Idle", "REPEAT"], x, y, BaseEnum.CENTER | BaseEnum.BOTTOM);
+                var sp = new Sprite("Futaba", jsMebae, ["Mebae", "Idle", "REPEAT"], x, y, Sprite.Pivot.CENTER | Sprite.Pivot.BOTTOM);
                 sp.addPhysic(isPickUp);
                 gSMan.append(sp);
 

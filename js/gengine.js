@@ -1,11 +1,3 @@
-BaseEnum = {
-    "LEFT": 0x01,
-    "CENTER": 0x02,
-    "RIGHT": 0x04,
-    "TOP": 0x10,
-    "MIDDLE": 0x20,
-    "BOTTOM": 0x40
-};
 
 class ImageLoader{
     static ImageDic = [];
@@ -28,6 +20,15 @@ class ImageLoader{
 }
 
 class Sprite {
+    static Pivot = {
+        "LEFT": 0x01,
+        "CENTER": 0x02,
+        "RIGHT": 0x04,
+        "TOP": 0x10,
+        "MIDDLE": 0x20,
+        "BOTTOM": 0x40
+    };
+    
     TagNames = [];              // 複数のTagを初期設定可能
     currentFrameTagNum = 0;    // currentFrameTagnamesの現在のタグ番号
     currentFrameTagFrom = -1;   // frameTagのFrom
@@ -48,7 +49,7 @@ class Sprite {
     durationCount = 0;
     scale = 1.0;
 
-    BasePos = BaseEnum.CENTER | BaseEnum.BOTTOM;
+    BasePos = Sprite.Pivot.CENTER | Sprite.Pivot.BOTTOM;
 
     appendChild(sprite) {
         this.childs.push(sprite)
@@ -119,7 +120,7 @@ class Sprite {
         this.durationCount = 0;
     }
 
-    constructor(name, jsonData, TagNames, x = 0, y = 0, basePos = BaseEnum.CENTER | BaseEnum.BOTTOM, scale = 1.0) {
+    constructor(name, jsonData, TagNames, x = 0, y = 0, basePos = Sprite.Pivot.CENTER | Sprite.Pivot.BOTTOM, scale = 1.0) {
         this.spriteName = name;
         this.jsonData = jsonData;
         this.TagNames = TagNames;
@@ -181,25 +182,25 @@ class Sprite {
 
             // スプライトの左右中央＋下端に表示する場合の計算←今後起点をどこにするかの対応も必要となる
             switch (this.BasePos & 0x07) {
-                case BaseEnum.LEFT:
+                case Sprite.Pivot.LEFT:
                     baseX = 0;
                     break;
-                case BaseEnum.CENTER:
+                case Sprite.Pivot.CENTER:
                     baseX = (f.spriteSourceSize.x - f.sourceSize.w / 2) * this.scale;
                     break;
-                case BaseEnum.RIGHT:
+                case Sprite.Pivot.RIGHT:
                     baseX = -f.sourceSize.w * this.scale;
                     break;
             }
 
             switch (this.BasePos & 0x70) {
-                case BaseEnum.TOP:
+                case Sprite.Pivot.TOP:
                     baseY = 0;
                     break;
-                case BaseEnum.MIDDLE:
+                case Sprite.Pivot.MIDDLE:
                     baseY = (f.spriteSourceSize.y - f.sourceSize.h / 2) * this.scale;
                     break;
-                case BaseEnum.BOTTOM:
+                case Sprite.Pivot.BOTTOM:
                     baseY = (f.spriteSourceSize.y - f.sourceSize.h) * this.scale;
                     break;
             }
@@ -287,7 +288,7 @@ class SpriteManager {
         if (this.bClickPerticle) {
             for (var i = 0; i < this.PerticleNumber; i++) {
                 var scale = (5 + getRandomInt(5)) / 10.0;
-                var sp = new Sprite("Perticle", jsPerticle, ["Idle", "DIE"], this.ClickedX, this.ClickedY, BaseEnum.CENTER | BaseEnum.MIDDLE, scale);
+                var sp = new Sprite("Perticle", jsPerticle, ["Idle", "DIE"], this.ClickedX, this.ClickedY, Sprite.Pivot.CENTER | Sprite.Pivot.MIDDLE, scale);
                 sp.vx = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed) / 10;
                 sp.vy = (getRandomInt(this.PerticleSpeed * 2) - this.PerticleSpeed) / 10;
                 sp.addPhysic(this.perticle);
