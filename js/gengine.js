@@ -7,6 +7,26 @@ BaseEnum = {
     "BOTTOM": 0x40
 };
 
+class ImageLoader{
+    static ImageDic = [];
+
+    static async LoadJSImage(name, jsonData) {
+        await this.LoadImage(name, jsonData.meta.image);
+    }
+
+    static async LoadImage(name, ImageName) {
+        if (this.ImageDic[name] === undefined) {
+            const img = new Image();
+            img.src = "images/" + ImageName;  // asepriteのJSONをわりつける
+            await img.decode();
+            // await 以降はイメージが使えるので、ちゃんと情報も表示できる
+            console.log(`loaded pic ! width: ${img.width}, height: ${img.height}`);
+            this.ImageDic[name] = img;
+        }
+        return this.ImageDic[name];
+    }
+}
+
 class Sprite {
     TagNames = [];              // 複数のTagを初期設定可能
     currentFrameTagNum = 0;    // currentFrameTagnamesの現在のタグ番号
@@ -21,7 +41,7 @@ class Sprite {
     jsonData;
     spriteName = "";
     image;
-    static ImageDic = [];
+
     childs = [];
     physics = [];
     followParent = true;   // 親についていくかどうか
@@ -112,24 +132,8 @@ class Sprite {
         }
         // スプライトのイメージは前もって読み込んでおく必要がある
         if (jsonData != null) {
-            this.image = Sprite.ImageDic[name];
+            this.image = ImageLoader.ImageDic[name];
         }
-    }
-
-    static async LoadJSImage(name, jsonData) {
-        await Sprite.LoadImage(name, jsonData.meta.image);
-    }
-
-    static async LoadImage(name, ImageName) {
-        if (Sprite.ImageDic[name] === undefined) {
-            const img = new Image();
-            img.src = "images/" + ImageName;  // asepriteのJSONをわりつける
-            await img.decode();
-            // await 以降はイメージが使えるので、ちゃんと情報も表示できる
-            console.log(`loaded pic ! width: ${img.width}, height: ${img.height}`);
-            Sprite.ImageDic[name] = img;
-        }
-        return Sprite.ImageDic[name];
     }
 
     // 16.67mmSec毎に呼ばれる
@@ -268,7 +272,7 @@ class SpriteManager {
     PerticleSpeed = 0;
 
     async enablePerticle(name, imageName, PerticleNumber, PerticleSpeed) {
-        await Sprite.LoadImage("Perticle", "perticle.png");
+        await ImageLoader.LoadImage("Perticle", "perticle.png");
         this.PerticleNumber = PerticleNumber;
         this.PerticleSpeed = PerticleSpeed;
         this.bClickPerticle = true;

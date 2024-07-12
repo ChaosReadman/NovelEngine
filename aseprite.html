@@ -48,7 +48,7 @@
 
         async function init() {
             // Sprite用の画像は最初に読んでおくことにする
-            await Sprite.LoadJSImage("Futaba", jsMebae);
+            await ImageLoader.LoadJSImage("Futaba", jsMebae);
             
             gSMan = new SpriteManager(document.getElementById("canvas").getContext("2d"));
             // sprBgはスプライトがなく、Physicsで画面をクリアするだけ
