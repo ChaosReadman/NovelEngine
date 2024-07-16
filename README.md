@@ -10,10 +10,10 @@ mindmap
 top((ゲームエンジン))
     SpriteManager(spriteManagerクラス)
         Finished((出来てるもの))
+            カーソル表示
             OnClick対応<br>（パーティクル表示）
             Bg表示<br>色クリア含む
         NotFinishd))出来てないもの((
-            マウス移動カーソル（アニメーション対応←マウスカーソル追いかけるとか）
             Map表示？<br>（Map用２次元でAsepriteで作成したマップを表示する？）
             画面リサイズ対応
     Sprite(spriteクラス)
