@@ -284,12 +284,14 @@ class BG {
 class SpriteManager {
     sprites = [];
     BGs = [];   // BG用の画像データ
+    cursor = [];    // カーソルアニメ用
     context = null;
     isRunning = false;
     ClickedX = -1000;
     ClickedY = -1000;
     prevTime;
     bClickPerticle = false;
+    bDrawMouseCursor = false;
 
     PerticleNumber = 0;
     PerticleSpeed = 0;
@@ -337,11 +339,27 @@ class SpriteManager {
         this.drawPerticle();
     }
 
+    async enableMouseCursor(name, imageName) {
+        await ImageLoader.LoadImage(name, imageName);
+        var c = new Sprite(name, jsMouseCursor, ["Idle", "REPEAT"], -1000, -1000, Sprite.Pivot.CENTER | Sprite.Pivot.MIDDLE);
+
+        c.parentSpriteManager = this;
+        this.cursor.push(c)
+        this.bDrawMouseCursor = true;
+    }
+
+    OnMouseMove(e){
+        var rect = e.target.getBoundingClientRect();
+        this.cursor[0].xPos = e.clientX - rect.left;
+        this.cursor[0].yPos = e.clientY - rect.top;
+    }
+
     constructor(context) {
         console.log("constructor");
         this.context = context;
         console.log("canvas Size = (" + this.context.canvas.width + "," + this.context.canvas.height + ")");
         this.context.canvas.addEventListener('click', this.OnClick.bind(this), false);
+        this.context.canvas.addEventListener("mousemove", this.OnMouseMove.bind(this));
     }
 
     loop(timeStamp) {
@@ -368,6 +386,9 @@ class SpriteManager {
                     i++;
                 }
             }
+
+            this.cursor[0].draw(this.context);
+
             this.prevTime = timeStamp;
         }
         if (this.isRunning) {
